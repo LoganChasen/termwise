@@ -1,5 +1,7 @@
-import { PageHeader } from "@/ui";
+import { loadAppData } from "@/server/mode";
+import { UpdatesView } from "@/views/updates/UpdatesView";
 
-export default function Page() {
-  return <PageHeader title="Updates" subtitle="Coming next." />;
+export default async function Page() {
+  const data = await loadAppData();
+  return <UpdatesView data={data} />;
 }

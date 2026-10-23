@@ -65,3 +65,14 @@ describe("Store settings and docs", () => {
     expect(s.listDocs("syllabus:").map((d) => d.key)).toEqual(["syllabus:c1"]);
   });
 });
+
+describe("Store item state for syllabus-only items", () => {
+  it("remembers done and estimate for uids that aren't in the feed", () => {
+    const s = new Store(":memory:");
+    s.setDone("syllabus:c1:0", true, new Date("2026-10-01T00:00:00Z"));
+    s.setEstimate("syllabus:c1:0", 6);
+    expect(s.getItemState("syllabus:c1:0")).toEqual({ doneAt: "2026-10-01T00:00:00.000Z", estimateOverride: 6 });
+    s.setDone("syllabus:c1:0", false);
+    expect(s.getItemState("syllabus:c1:0").doneAt).toBeNull();
+  });
+});

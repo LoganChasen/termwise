@@ -26,6 +26,11 @@ CREATE TABLE IF NOT EXISTS updates (
 CREATE TABLE IF NOT EXISTS docs (key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at TEXT NOT NULL);
 `;
 
+export interface ItemState {
+  doneAt: string | null;
+  estimateOverride: number | null;
+}
+
 export class Store {
   readonly db: DatabaseSync;
 
@@ -90,10 +95,21 @@ export class Store {
     return (this.db.prepare(sql).all() as Record<string, unknown>[]).map(toItem);
   }
   setDone(uid: string, done: boolean, now = new Date()): void {
-    this.db.prepare("UPDATE items SET done_at = ? WHERE uid = ?").run(done ? now.toISOString() : null, uid);
+    const doneAt = done ? now.toISOString() : null;
+    const r = this.db.prepare("UPDATE items SET done_at = ? WHERE uid = ?").run(doneAt, uid);
+    if (r.changes === 0) this.setItemState(uid, { doneAt });
   }
   setEstimate(uid: string, hours: number | null): void {
-    this.db.prepare("UPDATE items SET estimate_override = ? WHERE uid = ?").run(hours, uid);
+    const r = this.db.prepare("UPDATE items SET estimate_override = ? WHERE uid = ?").run(hours, uid);
+    if (r.changes === 0) this.setItemState(uid, { estimateOverride: hours });
+  }
+
+  /** Done/estimate state for items that aren't in the feed (exams from a syllabus). */
+  getItemState(uid: string): ItemState {
+    return this.getDoc<ItemState>(`itemstate:${uid}`) ?? { doneAt: null, estimateOverride: null };
+  }
+  private setItemState(uid: string, patch: Partial<ItemState>): void {
+    this.setDoc(`itemstate:${uid}`, { ...this.getItemState(uid), ...patch });
   }
 
   /**

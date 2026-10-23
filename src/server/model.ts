@@ -77,7 +77,10 @@ export function buildAppData(store: Store, opts: { mode: "real" | "demo"; feedCo
   const visible = new Set(courses.filter((c) => !c.hidden).map((c) => c.id));
 
   const feedItems = store.listItems().filter((i) => i.courseId === null || visible.has(i.courseId));
-  const examItems = courses.filter((c) => !c.hidden).flatMap((c) => syllabusExamItems(c, feedItems));
+  const examItems = courses
+    .filter((c) => !c.hidden)
+    .flatMap((c) => syllabusExamItems(c, feedItems))
+    .map((i) => ({ ...i, ...store.getItemState(i.uid) }));
   const all = [...feedItems, ...examItems];
 
   const estimates = estimateHours(all);
@@ -116,9 +119,11 @@ export function buildAppData(store: Store, opts: { mode: "real" | "demo"; feedCo
  */
 function syllabusExamItems(course: CourseView, feed: StoredItem[]): StoredItem[] {
   const exams = course.syllabus?.exams ?? [];
+  // Index by position in the syllabus so the uid stays stable when Canvas duplicates are skipped.
   return exams
-    .filter((e) => !feed.some((f) => f.courseId === course.id && itemDay(f) === e.date && detectWorkType(f.title) === "exam"))
-    .map((e, i) => examToItem(course.id, e, i));
+    .map((e, i) => [e, i] as const)
+    .filter(([e]) => !feed.some((f) => f.courseId === course.id && itemDay(f) === e.date && detectWorkType(f.title) === "exam"))
+    .map(([e, i]) => examToItem(course.id, e, i));
 }
 
 function examToItem(courseId: string, e: SyllabusExam, index: number): StoredItem {
