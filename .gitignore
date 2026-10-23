@@ -10,3 +10,7 @@ next-env.d.ts
 *.tsbuildinfo
 AGENTS.md
 CLAUDE.md
+
+# Personal notes
+*_summary.docx
+~$*
