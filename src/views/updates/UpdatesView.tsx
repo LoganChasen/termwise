@@ -10,6 +10,7 @@ import type { AppData, CourseView, ItemView } from "@/server/model";
 import { ButtonLink, Card, CourseChip, cx, EmptyState, focusRing, IconArrowRight, IconCalendar, IconCheck, IconClock, IconPlus, IconUpdates, IconMapPin, PageHeader } from "@/ui";
 import { IconAward, IconInfo, IconPencil, IconSwap, IconTrash } from "../assignments/icons";
 import { courseMap, examLocation, isTest } from "../assignments/meta";
+import { DemoButton } from "@/ui/DemoButton";
 
 type Update = AppData["updates"][number];
 
@@ -47,9 +48,12 @@ export function UpdatesView({ data }: { data: AppData }) {
             title="Welcome to Termwise"
             body="Connect your Canvas calendar and Termwise will tell you what changed each time you open it: new assignments, moved due dates, and posted grades."
             action={
-              <ButtonLink href="/setup" variant="primary">
-                Set up Termwise
-              </ButtonLink>
+              <div className="flex flex-wrap justify-center gap-2">
+                <ButtonLink href="/setup" variant="primary">
+                  Set up Termwise
+                </ButtonLink>
+                <DemoButton />
+              </div>
             }
           />
         </Card>
