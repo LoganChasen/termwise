@@ -50,3 +50,30 @@ export type WorkType =
   | "reading"
   | "discussion"
   | "other";
+
+export type UpdateKind = "added" | "removed" | "rescheduled" | "renamed" | "grade-posted" | "grade-changed";
+
+/** One row in the Updates feed. */
+export interface UpdateEvent {
+  kind: UpdateKind;
+  /** When Termwise noticed the change. */
+  at: string;
+  uid: string | null;
+  courseId: string | null;
+  title: string;
+  /** Previous value (old due date, old title, old score). */
+  before: string | null;
+  /** New value. */
+  after: string | null;
+}
+
+/** A feed item as stored locally, plus what the user did with it. */
+export interface StoredItem extends FeedItem {
+  firstSeen: string;
+  /** Set when the user checks it off. */
+  doneAt: string | null;
+  /** User's own hours estimate, overriding the automatic one. */
+  estimateOverride: number | null;
+  /** Set when it disappeared from the feed while still upcoming. */
+  removedAt: string | null;
+}
