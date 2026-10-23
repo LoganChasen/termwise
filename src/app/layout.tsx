@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { loadAppData } from "@/server/mode";
+import { Shell } from "@/ui/Shell";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -9,10 +11,25 @@ export const metadata: Metadata = {
   description: "Your whole semester in one place: assignments, workload heat map, grades, and what changed.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const dynamic = "force-dynamic";
+
+// Applies the saved theme before paint so there's no light/dark flash.
+const THEME_SCRIPT = `try{var t=localStorage.getItem("tw-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}`;
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const data = await loadAppData();
+  const seen = data.lastSeenAt ? new Date(data.lastSeenAt).getTime() : 0;
+  const updateCount = data.updates.filter((u) => new Date(u.at).getTime() > seen).length;
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen font-sans antialiased">{children}</body>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
+      <body className="min-h-screen font-sans antialiased">
+        <Shell mode={data.mode} lastSyncAt={data.lastSyncAt} feedConnected={data.feedConnected} updateCount={updateCount}>
+          {children}
+        </Shell>
+      </body>
     </html>
   );
 }
