@@ -172,7 +172,7 @@ function SyncedAgo({ iso }: { iso: string }) {
 function ThemeToggle() {
   const [dark, setDark] = useState<boolean | null>(null);
   useEffect(() => {
-    const stored = safeGet("tw-theme");
+    const stored = document.documentElement.dataset.theme ?? null;
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     setDark(stored ? stored === "dark" : prefersDark);
   }, []);
@@ -180,26 +180,11 @@ function ThemeToggle() {
     const next = !dark;
     setDark(next);
     document.documentElement.dataset.theme = next ? "dark" : "light";
-    safeSet("tw-theme", next ? "dark" : "light");
+    document.cookie = `tw-theme=${next ? "dark" : "light"}; path=/; max-age=31536000; samesite=lax`;
   };
   return (
     <button type="button" onClick={flip} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} className={cx("grid size-9 place-items-center rounded-lg text-ink-2 hover:bg-surface-2", focusRing)}>
       {dark ? <IconSun /> : <IconMoon />}
     </button>
   );
-}
-
-function safeGet(k: string): string | null {
-  try {
-    return localStorage.getItem(k);
-  } catch {
-    return null;
-  }
-}
-function safeSet(k: string, v: string) {
-  try {
-    localStorage.setItem(k, v);
-  } catch {
-    /* storage blocked: theme just won't persist */
-  }
 }

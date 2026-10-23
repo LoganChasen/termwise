@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Script from "next/script";
+import { cookies } from "next/headers";
 import { loadAppData } from "@/server/mode";
 import { Shell } from "@/ui/Shell";
 import "./globals.css";
@@ -14,20 +14,15 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-// Applies the saved theme before paint so there's no light/dark flash.
-const THEME_SCRIPT = `try{var t=localStorage.getItem("tw-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}`;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const data = await loadAppData();
+  // The theme choice lives in a cookie so the server renders it directly (no flash, no inline script).
+  const theme = (await cookies()).get("tw-theme")?.value;
   const seen = data.lastSeenAt ? new Date(data.lastSeenAt).getTime() : 0;
   const updateCount = data.updates.filter((u) => new Date(u.at).getTime() > seen).length;
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <head>
-        <Script id="theme" strategy="beforeInteractive">
-          {THEME_SCRIPT}
-        </Script>
-      </head>
+    <html lang="en" className={inter.variable} data-theme={theme === "dark" || theme === "light" ? theme : undefined} suppressHydrationWarning>
       <body className="min-h-screen font-sans antialiased">
         <Shell mode={data.mode} lastSyncAt={data.lastSyncAt} feedConnected={data.feedConnected} updateCount={updateCount}>
           {children}
