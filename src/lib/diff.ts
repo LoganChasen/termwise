@@ -1,4 +1,4 @@
-import type { FeedItem, UpdateEvent } from "./types";
+import type { CourseGrades, FeedItem, UpdateEvent } from "./types";
 
 /**
  * Compare the previous feed with the new one and describe what changed.
@@ -37,4 +37,32 @@ export function dueTime(item: Pick<FeedItem, "start" | "allDay">): number {
     return new Date(y!, m! - 1, d!, 23, 59, 59).getTime();
   }
   return new Date(item.start).getTime();
+}
+
+/** Compare two pastes of a course's Canvas Grades page: newly graded work and changed scores. */
+export function diffGrades(
+  prev: CourseGrades | null,
+  next: CourseGrades,
+  courseId: string,
+  now: Date,
+): UpdateEvent[] {
+  const at = now.toISOString();
+  const before = new Map((prev?.entries ?? []).map((e) => [e.name, e]));
+  const out: UpdateEvent[] = [];
+  for (const e of next.entries) {
+    if (e.status !== "graded" || e.score === null) continue;
+    const old = before.get(e.name);
+    const after = formatScore(e.score, e.outOf);
+    if (!old || old.status !== "graded" || old.score === null) {
+      if (prev) out.push({ kind: "grade-posted", at, uid: null, courseId, title: e.name, before: null, after });
+    } else if (old.score !== e.score || old.outOf !== e.outOf) {
+      out.push({ kind: "grade-changed", at, uid: null, courseId, title: e.name, before: formatScore(old.score, old.outOf), after });
+    }
+  }
+  return out;
+}
+
+export function formatScore(score: number, outOf: number | null): string {
+  const s = Number.isInteger(score) ? String(score) : score.toFixed(1);
+  return outOf ? `${s}/${outOf}` : s;
 }
