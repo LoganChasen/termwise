@@ -37,7 +37,7 @@ describe("distribute", () => {
 
 describe("heatLevel", () => {
   it("maps hours to 0–5", () => {
-    expect([0, 0.5, 1.5, 3, 4, 8].map(heatLevel)).toEqual([0, 1, 2, 3, 4, 5]);
+    expect([0, 0.5, 2, 4, 5, 8].map(heatLevel)).toEqual([0, 1, 2, 3, 4, 5]);
   });
 });
 

@@ -56,7 +56,7 @@ export const config = {
     /** Items due before this hour count the previous day as the last work day. */
     morningCutoffHour: 12,
     /** Upper bounds (hours) for heat levels 0..4; anything above the last is level 5. */
-    levelThresholds: [0.25, 1, 2, 3.5, 5],
+    levelThresholds: [0.25, 1.5, 3, 4.5, 6],
     /** A week is a crunch week if it's this many times the median week and at least crunchMinHours. */
     crunchVsMedian: 1.4,
     crunchMinHours: 12,
