@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import { loadAppData } from "@/server/mode";
 import { Shell } from "@/ui/Shell";
 import "./globals.css";
@@ -23,7 +24,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        <Script id="theme" strategy="beforeInteractive">
+          {THEME_SCRIPT}
+        </Script>
       </head>
       <body className="min-h-screen font-sans antialiased">
         <Shell mode={data.mode} lastSyncAt={data.lastSyncAt} feedConnected={data.feedConnected} updateCount={updateCount}>

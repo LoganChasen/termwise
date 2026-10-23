@@ -1,5 +1,7 @@
-import { PageHeader } from "@/ui";
+import { loadAppData } from "@/server/mode";
+import { CoursesOverview } from "@/views/courses/CoursesOverview";
 
-export default function Page() {
-  return <PageHeader title="Courses" subtitle="Coming next." />;
+export default async function Page() {
+  const data = await loadAppData();
+  return <CoursesOverview data={data} />;
 }
