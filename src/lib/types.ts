@@ -77,3 +77,83 @@ export interface StoredItem extends FeedItem {
   /** Set when it disappeared from the feed while still upcoming. */
   removedAt: string | null;
 }
+
+// ---------- Syllabus (extracted by the Claude API, confirmed by the user) ----------
+
+export type Weekday = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
+
+export interface Meeting {
+  days: Weekday[];
+  /** "HH:MM", 24-hour. */
+  start: string;
+  end: string;
+  location: string | null;
+  kind: "lecture" | "lab" | "section" | "other";
+}
+
+export interface OfficeHours {
+  who: string;
+  days: Weekday[];
+  start: string;
+  end: string;
+  location: string | null;
+}
+
+export interface SyllabusExam {
+  title: string;
+  /** "YYYY-MM-DD". */
+  date: string;
+  /** "HH:MM" or null if not stated. */
+  time: string | null;
+  type: "midterm" | "final" | "quiz" | "other";
+  location: string | null;
+}
+
+export interface GradeCategory {
+  name: string;
+  /** Percent of the final grade, 0–100. */
+  weight: number;
+  /** How many lowest scores are dropped. */
+  dropLowest: number;
+}
+
+export interface LetterCutoff {
+  letter: string;
+  /** Minimum percent for this letter. */
+  min: number;
+}
+
+export interface SyllabusInfo {
+  courseTitle: string | null;
+  instructor: string | null;
+  meetings: Meeting[];
+  officeHours: OfficeHours[];
+  exams: SyllabusExam[];
+  categories: GradeCategory[];
+  /** Null = use the default scale. */
+  letterScale: LetterCutoff[] | null;
+  latePolicy: string | null;
+  /** Other rules worth knowing (attendance, extra credit, curve...). */
+  notes: string[];
+}
+
+// ---------- Grades (pasted from the Canvas Grades page) ----------
+
+export interface GradeEntry {
+  name: string;
+  /** Assignment group as Canvas shows it, e.g. "Problem Sets". */
+  category: string | null;
+  /** Null when not graded yet. */
+  score: number | null;
+  outOf: number | null;
+  status: "graded" | "missing" | "excused" | "ungraded";
+}
+
+export interface CourseGrades {
+  pastedAt: string;
+  /** The total Canvas shows, if the paste included it. */
+  canvasTotal: number | null;
+  entries: GradeEntry[];
+  /** Group weights from the Canvas Grades page sidebar, if present. */
+  canvasWeights: { name: string; weight: number }[];
+}
