@@ -1,0 +1,44 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Instructure//Canvas//EN
+X-WR-CALNAME:Sample Student Calendar (Canvas)
+BEGIN:VEVENT
+DTEND:20261023T035900Z
+DTSTART:20261023T035900Z
+CLASS:PUBLIC
+SEQUENCE:0
+SUMMARY:Problem Set 4 [FIN_320_1_FA26]
+URL;VALUE=URI:https://canvas.emory.edu/calendar?include_contexts=course_12345&month=10&year=2026#assignment_678
+UID:event-assignment-678
+END:VEVENT
+BEGIN:VEVENT
+DTEND;VALUE=DATE:20261030
+DTSTART;VALUE=DATE:20261030
+CLASS:PUBLIC
+SUMMARY:Reading Response [Fall 2026 - ECON 201 - 002]
+URL;VALUE=URI:https://canvas.emory.edu/calendar?include_contexts=course_222&month=10&year=2026#assignment_901
+UID:event-assignment-901
+END:VEVENT
+BEGIN:VEVENT
+DTEND:20261028T173000Z
+DTSTART:20261028T160000Z
+CLASS:PUBLIC
+LOCATION:White Hall 208
+SUMMARY:Midterm 2 [FIN_320_1_FA26]
+URL;VALUE=URI:https://canvas.emory.edu/calendar?include_contexts=course_12345&month=10&year=2026#calendar_event_55
+UID:event-calendar-event-55
+END:VEVENT
+BEGIN:VEVENT
+DTEND:20261021T150000Z
+DTSTART:20261021T140000Z
+SUMMARY:Dentist [Logan Chasen]
+URL;VALUE=URI:https://canvas.emory.edu/calendar?include_contexts=user_9&month=10&year=2026#calendar_event_77
+UID:event-calendar-event-77
+END:VEVENT
+BEGIN:VEVENT
+DTEND:20261025T035900Z
+DTSTART:20261025T035900Z
+SUMMARY:Lab 3: Arrays [CS 170 [Lab]]
+UID:event-assignment-1000
+END:VEVENT
+END:VCALENDAR
